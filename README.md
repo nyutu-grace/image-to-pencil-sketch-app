@@ -1,2 +1,2 @@
 # image-to-pencil-sketch-app
-![alt text](image.png)
+![screenshot](frontend/src/assets/images/screenshot.png)
