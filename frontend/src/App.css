@@ -60,7 +60,7 @@ body {
 
 .gallery-item {
   flex: 1;
-  max-width: 350px;
+  max-width: 300px;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -78,7 +78,7 @@ body {
 }
 
 .img-thumbnail {
-  max-width: 350px;
+  max-width: 300px;
   height: auto;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
