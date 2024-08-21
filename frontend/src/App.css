@@ -100,3 +100,9 @@ body {
   gap: 10px;
   justify-content: center;
 }
+
+.anime-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

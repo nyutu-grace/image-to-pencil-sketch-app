@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import logo from './assets/images/logo.png';
 import sketch1 from './assets/sketches/sketch1.png';
@@ -10,12 +10,14 @@ function App() {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [sketchUrls, setSketchUrls] = useState([]);
+  const [animeUrls, setAnimeUrls] = useState([]);
 
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
     setSelectedFiles(files);
     setPreviewUrls(files.map(file => URL.createObjectURL(file)));
     setSketchUrls([]);
+    setAnimeUrls([]);
   };
 
   const handleConvertToSketch = async () => {
@@ -42,6 +44,30 @@ function App() {
     }
   };
 
+  const handleConvertToAnime = async () => {
+    if (selectedFiles.length === 0) return;
+
+    const animePromises = selectedFiles.map(async (file) => {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch('http://127.0.0.1:5000/upload_anime', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+      return `data:image/jpeg;base64,${data.anime}`;
+    });
+
+    try {
+      const animes = await Promise.all(animePromises);
+      setAnimeUrls(animes);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   return (
     <div className="App">
       <nav className="navbar navbar-light bg-light sticky-navbar">
@@ -50,13 +76,13 @@ function App() {
         </a>
       </nav>
       <header className="header">
-        <h1 className="header-title">Easily convert any photo to sketch</h1>
+        <h1 className="header-title">Easily convert any photo to sketch or anime</h1>
         <p className="header-subtitle">
-          Take a fresh look at ordinary images and uncover your passion for sketch-style art
+          Take a fresh look at ordinary images and uncover your passion for sketch-style or anime-style art.
         </p>
 
         <div className="button-group">
-        <label htmlFor="upload-photo" className="btn btn-dark btn-lg">
+          <label htmlFor="upload-photo" className="btn btn-dark btn-lg">
             Upload photos
           </label>
           <input
@@ -74,8 +100,15 @@ function App() {
           >
             Convert to Sketch
           </button>
+          <button
+            className="btn btn-warning btn-lg"
+            onClick={handleConvertToAnime}
+            disabled={selectedFiles.length === 0}
+          >
+            Convert to Anime
+          </button>
         </div>
-        
+
         {previewUrls.length > 0 && (
           <div className="image-preview mt-4">
             <h5>Original Images:</h5>
@@ -92,17 +125,37 @@ function App() {
             <h5>Pencil Sketches:</h5>
             <div className="preview-grid">
               {sketchUrls.map((url, index) => (
-                  <div key={index} className="sketch-item">
-                    <img src={url} alt={`Sketch ${index}`} className="img-thumbnail" />
-                    <a
-                      href={url}
-                      download={`sketch-${index + 1}.jpg`}
-                      className="btn btn-success mt-2"
-                    >
-                      Download Sketch
-                    </a>
-                  </div>
-                ))}
+                <div key={index} className="sketch-item">
+                  <img src={url} alt={`Sketch ${index}`} className="img-thumbnail" />
+                  <a
+                    href={url}
+                    download={`sketch-${index + 1}.jpg`}
+                    className="btn btn-success mt-2"
+                  >
+                    Download Sketch
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {animeUrls.length > 0 && (
+          <div className="anime-preview mt-4">
+            <h5>Anime Images:</h5>
+            <div className="preview-grid">
+              {animeUrls.map((url, index) => (
+                <div key={index} className="anime-item">
+                  <img src={url} alt={`Anime ${index}`} className="img-thumbnail" />
+                  <a
+                    href={url}
+                    download={`anime-${index + 1}.jpg`}
+                    className="btn btn-success mt-2"
+                  >
+                    Download Anime
+                  </a>
+                </div>
+              ))}
             </div>
           </div>
         )}
